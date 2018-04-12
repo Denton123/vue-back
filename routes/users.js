@@ -9,7 +9,7 @@ router.get('/findUser/:id', User.findUser);
 router.post('/login', User.login);
 router.post('/register', User.register);
 router.get('/logout', User.logout);
-router.post('/update/:id', User.update);
+router.post('/update/:id/:flag', User.update);
 
 module.exports = router;
  

@@ -73,13 +73,15 @@ module.exports = {
 			}
 		})
 	},
-	// 退出
+	// 退出 
 	logout: (req, res, next) => {
 		res.send(200)
 	},
 	// 编辑
 	update: (req, res, next) => {
+		// console.log(req.path);
 		let contentType = req.get('Content-Type')
+		// 更新头像
 		if (contentType.indexOf('multipart/form-data') > -1) {
 			const uploader = require('../utils/upload.js')(imgUploadPath)
 			uploader.parse(req, (err, fields, files) => {
@@ -88,31 +90,58 @@ module.exports = {
 				}
 				let data = {}
 				for (let i in fields) {
-					//如果数据存在就添加
 					if (fields[i].length > 0) {
 						data[i] = fields[i]
 					}
 				}
 				if(files['file'] && files['file'].size > 0) {
-					data['avatar'] = path.basename(files.file.path);
-					User.update({
-						avatar: data['avatar']
-					},{
-						where: {
-							id: req.params.id
-						}
-					}).then(result => {
-						if (result[0] === 1) {
-							User.findById(req.params.id)
-							.then(data => {
-								res.send(data)
-							})
-						}
-					})
+					data['img'] = path.basename(files.file.path);
+					if (req.path.indexOf('avatar') !== -1) {
+						User.update({
+							avatar: data['img']
+						},{
+							where: {
+								id: req.params.id
+							}
+						}).then(result => {
+							if (result[0] === 1) {
+								User.findById(req.params.id)
+								.then(data => {
+									res.send(data)
+								})
+							}
+						})
+					} else {
+						User.update({
+							bg: data['img']
+						},{
+							where: {
+								id: req.params.id
+							}
+						}).then(result => {
+							if (result[0] === 1) {
+								User.findById(req.params.id)
+								.then(data => {
+									res.send(data)
+								})
+							}
+						})
+					}
 				}
-				
 			})
-			
+		} else {
+			User.update({
+				name: req.body.name,
+				sex: req.body.sex,
+				desc: req.body.desc
+			},{
+				where: {
+					id: req.params.id
+				}
+			})
+			.then(data => {
+				res.send(data)
+			})
 		}
 	}
 }

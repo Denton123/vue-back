@@ -22,15 +22,18 @@ module.exports = (sequelize, DataTypes) => {
             comment: '密码'
         },
     sex: {
-    	type: DataTypes.ENUM,
-    	values: ['male', 'female']
+        type: DataTypes.ENUM,
+        values: ['male', 'female']
     },
     avatar: {
         type: DataTypes.STRING(255), 
       },
-    introduction: {
+    desc: {
         type: DataTypes.STRING(255), 
       },
+    bg: {
+        type: DataTypes.STRING(255), 
+    },
   }, {});
   User.associate = function(models) {
     // associations can be defined here
