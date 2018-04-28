@@ -41,17 +41,27 @@ module.exports = {
 	},
 	// 根据用户id显示问题
 	showByUser: (req, res, next) => {
-		Question.findAll({
+		let page = parseInt(req.query.page) || 1
+		let pageSize = parseInt(req.query.pageSize) || 5
+		Question.findAndCountAll({
 			where: {
 				user_id: req.params.id
 			},
 			include: [{
 				model: User,
 				attributes: ['name', 'avatar']
-			}]
+			}],
+			offset: (page -1) * pageSize,
+			limit: pageSize
 		})
 		.then(data => {
-			res.send(data)
+			res.send({
+				data: data.rows,
+				total: data.count,
+				currentPage: page,
+				totalPage: Math.ceil(data.count/pageSize),
+				pageSize: pageSize
+			})
 		})
 		.catch(err => {
 			res.send(err)
@@ -65,6 +75,7 @@ module.exports = {
 			res.send(data)
 		})
 	},
+	// 根据问题id更新问题
 	updateById: (req, res, next) => {
 		// let data = transform(req.body)
 		Question.update({
@@ -86,6 +97,31 @@ module.exports = {
 		})
 		.catch(err => {
 			res.send(err)
+		})
+	},
+	// 新增问题
+	store: (req, res, next) => {
+		Question.find({
+			where: {
+				title: req.body.title
+			}
+		})
+		.then(data => {
+			if (!data) {
+				Question.create({
+					title: req.body.title,
+					content: req.body.content,
+					solve: '0',
+					user_id: req.params.id
+				})
+				.then(result => {
+					if (result) {
+						res.send('success')
+					} else {
+						res.send('error')
+					}
+				})
+			}
 		})
 	}
 }

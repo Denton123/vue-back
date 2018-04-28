@@ -11,7 +11,6 @@ function getHash(password) {
 	return hash
 }
 
-console.log(User + 'new');
 module.exports = {
 	findUser: (req, res, next) => {
 		User.findById(req.params.id)
