@@ -1,6 +1,7 @@
 const Idea = require('../models').Idea
 const path = require('path')
 const formidable = require('formidable')
+const User = require('../models').User
 
 const imgUploadPath =require('../config/config.js')['imgUploads']
 
@@ -75,6 +76,33 @@ module.exports = {
 	index: (req, res, next) => {
 		Idea.findAll().then(data=>{
 			res.send(data)
+		})
+	},
+	showByUser: (req, res, next) => {
+		let page = parseInt(req.query.page) || 1
+		let pageSize = parseInt(req.query.pageSize) || 5
+		Idea.findAndCountAll({
+			where: {
+				user_id: req.params.id
+			},
+			include: [{
+				model: User,
+				attributes: ['name', 'avatar']
+			}],
+			offset: (page -1) * pageSize,
+			limit: pageSize
+		})
+		.then(data => {
+			res.send({
+				data: data.rows,
+				total: data.count,
+				currentPage: page,
+				totalPage: Math.ceil(data.count/pageSize),
+				pageSize: pageSize
+			})
+		})
+		.catch(err => {
+			res.send(err)
 		})
 	}
 }
