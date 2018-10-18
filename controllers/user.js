@@ -62,12 +62,15 @@ module.exports = {
 				name: name,
 				password: secret
 			},
-			attributes: {exclude: ['password']}
+			attributes: {
+				exclude: ['password']
+			}
 		})
 		.then(user => {
 			if (!user) {
 				res.send('error')
 			} else {
+				req.session.user = user
 				res.send(user)
 			}
 		})

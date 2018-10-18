@@ -5,7 +5,7 @@ module.exports = {
   development: {
     username: 'root',
     password: 'root',
-    database: 'database_development',
+    database: 'myProject',
     host: '127.0.0.1',
     dialect: 'mysql',
     timezone: '+08:00' //东八时区
@@ -13,7 +13,7 @@ module.exports = {
   test: {
     username: 'root',
     password: 'root',
-    database: 'node',
+    database: 'myProject',
     host: '127.0.0.1',
     dialect: 'mysql',
     timezone: '+08:00' //东八时区
@@ -32,4 +32,9 @@ module.exports = {
     }
   },
   imgUploads: path.join(__dirname, '..', 'public', 'uploadImgs'),
+  session: {
+    secret: 'mynode',
+    key: 'mynode',
+    maxAge: 2480000
+  }
 };

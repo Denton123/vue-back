@@ -20,8 +20,8 @@ module.exports = (sequelize, DataTypes) => {
         comment: '问题内容'
     },
     date: {
-            type: DataTypes.DATE,
-            comment: '发表日期'
+        type: DataTypes.DATE,
+        comment: '发表日期'
     },
   }, {});
   Article.associate = function(models) {

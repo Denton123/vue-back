@@ -8,29 +8,6 @@ const imgUploadPath =require('../config/config.js')['imgUploads']
 const fs = require('fs')
 const gm = require('gm')
 
-function getPath (req) {
-	return new Promise((resolve, reject) => {
-		const form = formidable.IncomingForm();
-		form.uploadDir = './public/uploadImgs';
-		form.parse(req, (err, fields, files) => {
-			const imgName = (new Date().getTime() + Math.ceil(Math.random()*10000)).toString(16) + 1;
-			const fullName = imgName + path.extname(files.file.name);
-			const repath = './public/uploadImgs/' + fullName;
-			fs.rename(files.file.path, repath);
-			gm(repath)
-			.resize(200, 200, "!")
-			.write(repath, (err) => {
-				// if(err){
-				// 	console.log('裁切图片失败');
-				// 	reject('裁切图片失败');
-				// 	return
-				// }
-				resolve(fullName)
-			})
-		});
-	})
-}
-
 module.exports = {
 	// 上传图片
 	uploadImg: (req, res, next) => {
@@ -59,8 +36,8 @@ module.exports = {
 	store: (req, res, next) => {
 		Idea.create({
 			pic: req.body.pic,
-			user_id: req.params.id,
-			word: req.body.word
+			user_id: req.body.user_id,
+			title: req.body.title
 		})
 		.then(data => {
 			if (data) {
@@ -74,8 +51,18 @@ module.exports = {
 		})
 	},
 	index: (req, res, next) => {
-		Idea.findAll().then(data=>{
-			res.send(data)
+		let page = parseInt(req.query.page) || 1
+		let pageSize = parseInt(req.query.pageSize) || 6
+		Idea.findAndCountAll({
+			order: [['createdAt', 'DESC']],
+			limit: pageSize
+		}).then(data=>{
+			res.send({
+				data: data.rows,
+				total: data.count,
+				totalPage: Math.ceil(data.count/pageSize),
+				pageSize: pageSize
+			})
 		})
 	},
 	showByUser: (req, res, next) => {

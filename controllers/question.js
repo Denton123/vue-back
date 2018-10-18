@@ -112,7 +112,7 @@ module.exports = {
 					title: req.body.title,
 					content: req.body.content,
 					solve: '0',
-					user_id: req.params.id
+					user_id: req.body.user_id
 				})
 				.then(result => {
 					if (result) {
@@ -120,6 +120,9 @@ module.exports = {
 					} else {
 						res.send('error')
 					}
+				})
+				.catch(err => {
+					res.send(err)
 				})
 			}
 		})

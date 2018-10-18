@@ -16,7 +16,6 @@ IQuery.fn = IQuery.prototype = {
 			offset: (page - 1) * pageSize,
 			limit: pageSize
 		}, query)
-		// console.log('pagination --------- ', q)
 		return new Promise((resolve, reject) => {
 			this.Model.findAndCountAll(q)
 			.then(model => {
@@ -34,7 +33,6 @@ IQuery.fn = IQuery.prototype = {
 			})
 		})
 	}
-
 }
 
 IQuery.fn.init.prototype = IQuery.prototype
